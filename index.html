@@ -20,55 +20,65 @@ body {
   display: flex;
   align-items: center;
   overflow: hidden;
-  box-sizing: border-box;
 }
 
 .label {
-  flex: 0 0 auto;
   color: #ffffff;
   font-weight: bold;
-  font-size: 22px;
   margin-left: 20px;
-  padding-right: 18px;
-  border-right: 2px solid rgba(255,255,255,0.25);
-  z-index: 2;
+  margin-right: 20px;
+  font-size: 22px;
+  border-right: 2px solid rgba(255,255,255,0.3);
+  padding-right: 15px;
 }
 
 .ticker-container {
-  position: relative;
-  flex: 1;
-  height: 100%;
   overflow: hidden;
-  margin-left: 18px;
+  flex: 1;
 }
 
 .ticker {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
   white-space: nowrap;
   color: #ffffff;
   font-size: 22px;
-  will-change: transform;
-  animation: tickerScroll 18s linear infinite;
+  animation: scroll 20s linear infinite;
 }
 
-@keyframes tickerScroll {
-  0% {
-    transform: translate(100%, -50%);
-  }
-  100% {
-    transform: translate(-100%, -50%);
-  }
+@keyframes scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
 }
 </style>
 </head>
+
 <body>
-  <div class="ticker-wrap">
-    <div class="label">NOW PLAYING</div>
-    <div class="ticker-container">
-      <div class="ticker">Kiss From a Rose — Seal</div>
+
+<div class="ticker-wrap">
+  <div class="label">NOW PLAYING</div>
+  <div class="ticker-container">
+    <div class="ticker" id="tickerText">
+      Loading...
     </div>
   </div>
+</div>
+
+<script>
+async function updateTicker() {
+  try {
+    const response = await fetch('nowplaying.txt?' + new Date().getTime());
+    const text = await response.text();
+    document.getElementById('tickerText').innerText = text;
+  } catch (e) {
+    console.log("Error loading ticker");
+  }
+}
+
+// Update immediately
+updateTicker();
+
+// Refresh every 5 seconds
+setInterval(updateTicker, 5000);
+</script>
+
 </body>
 </html>
